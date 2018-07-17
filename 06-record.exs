@@ -1,4 +1,4 @@
-ExUnit.start
+ExUnit.start()
 
 defmodule User do
   defstruct email: nil, password: nil
@@ -17,11 +17,13 @@ defmodule RecordTest do
     use ExUnit.Case
 
     require Record
-    Record.defrecordp :person, first_name: nil, last_name: nil, age: nil
+    Record.defrecordp(:person, first_name: nil, last_name: nil, age: nil)
 
     test "defrecordp" do
-      p = person(first_name: "Kai", last_name: "Morgan", age: 5) # regular function call
-      assert p == {:person, "Kai", "Morgan", 5} # just a tuple!
+      # regular function call
+      p = person(first_name: "Kai", last_name: "Morgan", age: 5)
+      # just a tuple!
+      assert p == {:person, "Kai", "Morgan", 5}
     end
   end
 
@@ -31,25 +33,25 @@ defmodule RecordTest do
   # end
 
   def sample do
-    %User{email: "kai@example.com", password: "trains"} # special % syntax for struct creation
+    # special % syntax for struct creation
+    %User{email: "kai@example.com", password: "trains"}
   end
 
   test "defstruct" do
-    assert sample == %{__struct__: User, email: "kai@example.com", password: "trains"}
+    assert sample() == %{__struct__: User, email: "kai@example.com", password: "trains"}
   end
 
   test "property" do
-    assert sample.email == "kai@example.com"
+    assert sample().email == "kai@example.com"
   end
 
   test "update" do
-    u = sample
+    u = sample()
     u2 = %User{u | email: "tim@example.com"}
     assert u2 == %User{email: "tim@example.com", password: "trains"}
   end
 
   test "protocol" do
-    assert to_string(sample) == "kai@example.com"
+    assert to_string(sample()) == "kai@example.com"
   end
 end
-

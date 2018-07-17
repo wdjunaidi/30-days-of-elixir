@@ -1,6 +1,6 @@
 # http://elixir-lang.org/getting-started/basic-types.html
 
-ExUnit.start
+ExUnit.start()
 
 defmodule ListTest do
   use ExUnit.Case
@@ -10,33 +10,33 @@ defmodule ListTest do
   end
 
   test "sigil" do
-    assert sample == ~w(Tim Jen Mac Kai)
+    assert sample() == ~w(Tim Jen Mac Kai)
   end
 
   test "head" do
-    [head | _] = sample
+    [head | _] = sample()
     assert head == "Tim"
   end
 
   test "tail" do
-    [_ | tail] = sample
+    [_ | tail] = sample()
     assert tail == ~w(Jen Mac Kai)
   end
 
   # warning, has to traverse the entire list!
   test "last item" do
-    assert List.last(sample) == "Kai"
+    assert List.last(sample()) == "Kai"
   end
 
   test "delete item" do
-    assert List.delete(sample, "Mac") == ~w(Tim Jen Kai)
+    assert List.delete(sample(), "Mac") == ~w(Tim Jen Kai)
     # only deletes the first occurrence
     assert List.delete([1, 2, 2, 3], 2) == [1, 2, 3]
   end
 
   test "List.fold" do
     list = [20, 10, 5, 2.5]
-    sum = List.foldr list, 0, &(&1 + &2)
+    sum = List.foldr(list, 0, &(&1 + &2))
     # or...
     # sum = List.foldr list, 0, fn (num, sum) -> num + sum end
     assert sum == 37.5
@@ -46,7 +46,7 @@ defmodule ListTest do
   # (if possible)
   test "Enum.reduce" do
     list = [20, 10, 5, 2.5]
-    sum = Enum.reduce list, 0, &(&1 + &2)
+    sum = Enum.reduce(list, 0, &(&1 + &2))
     # or...
     # sum = Enum.reduce list, 0, fn (num, sum) -> num + sum end
     assert sum == 37.5
@@ -54,19 +54,21 @@ defmodule ListTest do
 
   # List.wrap is much like Ruby's Array() method
   test "wrap" do
-    assert List.wrap(sample) == sample
+    assert List.wrap(sample()) == sample()
     assert List.wrap(1) == [1]
     assert List.wrap([]) == []
     assert List.wrap(nil) == []
   end
 
-  test "Enum.filter_map" do
-    some = Enum.filter_map sample, &(String.first(&1) >= "M"), &(&1 <> " Morgan")
+  test "Enum.filter and Enum.map" do
+    some = sample()
+    |> Enum.filter(&(String.first(&1) >= "M"))
+    |> Enum.map(&(&1 <> " Morgan"))
     assert some == ["Tim Morgan", "Mac Morgan"]
   end
 
   test "list comprehension" do
-    some = for n <- sample, String.first(n) < "M", do: n <> " Morgan"
+    some = for n <- sample(), String.first(n) < "M", do: n <> " Morgan"
     assert some == ["Jen Morgan", "Kai Morgan"]
   end
 
@@ -79,30 +81,38 @@ defmodule ListTest do
   # Easy!
 
   test "manual reverse speed" do
-    {microsec, reversed} = :timer.tc fn ->     # Erlang function, yay!
-      Enum.reduce 1..1_000_000, [], fn (i, l) -> List.insert_at(l, 0, i) end
-    end
+    # Erlang function, yay!
+    {microsec, reversed} =
+      :timer.tc(fn ->
+        Enum.reduce(1..1_000_000, [], fn i, l -> List.insert_at(l, 0, i) end)
+      end)
+
     assert reversed == Enum.to_list(1_000_000..1)
-    IO.puts "manual reverse took #{microsec} microsecs"
+    IO.puts("manual reverse took #{microsec} microsecs")
   end
 
   # Another thing worth pointing out is it's cheap to insert at the front of a
   # list while it's expensive to insert at the end of a list (which is O(n)).
   test "speed of inserting at the end of a list" do
-    {microsec, reversed} = :timer.tc fn ->     # Erlang function, yay!
-      # It takes about 1.6 seconds on my laptop even with only 10000 elements.
-      # For 1..1_000_000, it would take a really long time.
-      Enum.reduce 1..10000, [], fn (i, l) -> List.insert_at(l, -1, i) end
-    end
+    # Erlang function, yay!
+    {microsec, reversed} =
+      :timer.tc(fn ->
+        # It takes about 1.6 seconds on my laptop even with only 10000 elements.
+        # For 1..1_000_000, it would take a really long time.
+        Enum.reduce(1..10000, [], fn i, l -> List.insert_at(l, -1, i) end)
+      end)
+
     assert reversed == Enum.to_list(1..10000)
-    IO.puts "inserting at the end of a list took #{microsec} microsecs"
+    IO.puts("inserting at the end of a list took #{microsec} microsecs")
   end
 
   test "Enum.reverse speed" do
-    {microsec, reversed} = :timer.tc fn ->
-      Enum.reverse 1..1_000_000
-    end
+    {microsec, reversed} =
+      :timer.tc(fn ->
+        Enum.reverse(1..1_000_000)
+      end)
+
     assert reversed == Enum.to_list(1_000_000..1)
-    IO.puts "Enum.reverse took #{microsec} microsecs"
+    IO.puts("Enum.reverse took #{microsec} microsecs")
   end
 end

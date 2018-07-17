@@ -11,7 +11,7 @@ defmodule Fib do
   # also, anonymous functions cannot call themselves recursively :-(
 
   def fib(n) when n < 2 do
-    Enum.take @seed, n
+    Enum.take(@seed, n)
   end
 
   def fib(n) when n >= 2 do
@@ -49,7 +49,7 @@ defmodule Fib2 do
   end
 end
 
-ExUnit.start
+ExUnit.start()
 
 defmodule RecursionTest do
   use ExUnit.Case
@@ -73,9 +73,9 @@ defmodule RecursionTest do
   end
 
   test "benchmark" do
-    {microsecs, _} = :timer.tc fn -> fib(1000) end
-    IO.puts "fib() took #{microsecs} microsecs"     # 7118 microsecs
-    {microsecs, _} = :timer.tc fn -> fib2(1000) end
-    IO.puts "fib2() took #{microsecs} microsecs"    # 90 microsecs
+    {microsecs, _} = :timer.tc(fn -> fib(1000) end)
+    IO.puts("fib() took #{microsecs} microsecs")    # 7118 microsecs
+    {microsecs, _} = :timer.tc(fn -> fib2(1000) end)
+    IO.puts("fib2() took #{microsecs} microsecs")   # 90 microsecs
   end
 end

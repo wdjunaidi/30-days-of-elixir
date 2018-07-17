@@ -2,7 +2,6 @@
 # http://elixir-lang.org/docs/stable/elixir/File.html
 
 defmodule CowInterrogator do
-
   # docstring are quite useful you can generate docs out of them
   # check: http://elixir-lang.org/getting-started/module-attributes.html
   # for more info
@@ -11,7 +10,7 @@ defmodule CowInterrogator do
   """
   def get_name do
     IO.gets("What is your name? ")
-    |> String.trim
+    |> String.trim()
   end
 
   def get_cow_lover do
@@ -20,28 +19,35 @@ defmodule CowInterrogator do
 
   def interrogate do
     name = get_name
+
     case String.downcase(get_cow_lover) do
       "y" ->
-        IO.puts "Great! Here's a cow for you #{name}:"
-        IO.puts cow_art
+        IO.puts("Great! Here's a cow for you #{name}:")
+        IO.puts(cow_art)
+
       "n" ->
-        IO.puts "That's a shame, #{name}."
+        IO.puts("That's a shame, #{name}.")
+
       _ ->
-        IO.puts "You should have entered 'y' or 'n'."
+        IO.puts("You should have entered 'y' or 'n'.")
     end
   end
 
   def cow_art do
     path = Path.expand("support/cow.txt", __DIR__)
+
     case File.read(path) do
-      {:ok, art} -> art
-      {:error, _} -> IO.puts "Error: cow.txt file not found"; System.halt(1)
+      {:ok, art} ->
+        art
+
+      {:error, _} ->
+        IO.puts("Error: cow.txt file not found")
+        System.halt(1)
     end
   end
 end
 
-ExUnit.start
-
+ExUnit.start()
 
 defmodule InputOutputTest do
   use ExUnit.Case
@@ -49,12 +55,13 @@ defmodule InputOutputTest do
 
   test "checks if cow_art returns string from support/cow.txt" do
     # this call checks if cow_art function returns art from txt file
-    art = CowInterrogator.cow_art
-    assert trim(art) |> first == "(" # first is implemented in String module
+    art = CowInterrogator.cow_art()
+    # first is implemented in String module
+    assert trim(art) |> first == "("
   end
 end
 
 # call interrogate performs most of the work
 # asks about your name, your interests in cows
 # and renders cow art
-CowInterrogator.interrogate
+CowInterrogator.interrogate()
